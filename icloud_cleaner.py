@@ -31,7 +31,7 @@ def fetch_uid(email_connection, email_id):
     return re.search(r'\((.*?)\)', uid_string[0]).group(1).replace('UID', '')
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser = argparse.ArgumentParser(description='Delete all incoming emails from a sender email address')
     parser.add_argument('sender_email', help='The sender whose messages should be deleted')
     return parser.parse_args()
 
