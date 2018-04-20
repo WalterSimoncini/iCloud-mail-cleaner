@@ -13,6 +13,8 @@ def connect(config):
     email_connection.login(config['username'], config['password'])
     email_connection.select('inbox')
 
+    print('Successfully connected to ' + config['username'] + '@icloud.com inbox')
+
     return email_connection
 
 def search_emails(email_connection, sender):
@@ -29,7 +31,7 @@ def set_deleted(email_connection, email_uid):
 def fetch_uid(email_connection, email_id):
     status, uid_string = email_connection.fetch(email_id, 'UID')
     uid_res = re.search(r'\((.*?)\)', uid_string[0])
-    
+
     if (uid_res != None):
         return uid_res.group(1).replace('UID', '')
     else:
@@ -64,9 +66,10 @@ for idx, e in enumerate(emails):
     # as specified by the IMAP standard
     uid = fetch_uid(email_connection, e)
     if (uid != None):
+        print('Deleted email ' + str(idx + 1) + '/' + emails_count)
         set_deleted(email_connection, uid)
-    
-    print('Deleted email ' + str(idx + 1) + '/' + emails_count)
+    else:
+        print('Email ' + str(idx + 1) + '/' + emails_count + ' was not valid')
 
 # Confirm the deletion of the messages
 email_connection.expunge()
