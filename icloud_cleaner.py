@@ -28,7 +28,12 @@ def set_deleted(email_connection, email_uid):
 
 def fetch_uid(email_connection, email_id):
     status, uid_string = email_connection.fetch(email_id, 'UID')
-    return re.search(r'\((.*?)\)', uid_string[0]).group(1).replace('UID', '')
+    uid_res = re.search(r'\((.*?)\)', uid_string[0])
+    
+    if (uid_res != None):
+        return uid_res.group(1).replace('UID', '')
+    else:
+        return None
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Delete all incoming emails from a sender email address')
@@ -50,18 +55,23 @@ config = ConfigObj('config.ini')
 email_connection = connect(config)
 
 emails = search_emails(email_connection, normalized_email)
+emails_count = str(len(emails))
+print('Found ' + emails_count + ' email(s) for ' + normalized_email)
 
-for e in emails:
+for idx, e in enumerate(emails):
     # The fetching of the email UID is required
     # since the email ID may change between operations
     # as specified by the IMAP standard
     uid = fetch_uid(email_connection, e)
-    set_deleted(email_connection, uid)
+    if (uid != None):
+        set_deleted(email_connection, uid)
+    
+    print('Deleted email ' + str(idx + 1) + '/' + emails_count)
 
 # Confirm the deletion of the messages
 email_connection.expunge()
 
-print('Deleted ' + str(len(emails)) + ' email(s) for ' + normalized_email)
+print('Deleted ' + emails_count + ' email(s) for ' + normalized_email)
 
 # Close the mailbox and logout
 email_connection.close()
