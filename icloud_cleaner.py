@@ -59,6 +59,7 @@ email_connection = connect(config)
 emails = search_emails(email_connection, normalized_email)
 emails_count = str(len(emails))
 total_emails = int(emails_count)
+total_deleted_emails = 0
 
 while int(emails_count) > 0:
     print('Found ' + emails_count + ' email(s) for ' + normalized_email)
@@ -69,10 +70,10 @@ while int(emails_count) > 0:
         # as specified by the IMAP standard
         uid = fetch_uid(email_connection, e)
         if (uid != None):
-            print('Deleted email ' + str(idx + 1) + '/' + str(total_emails))
+            print('Deleted email ' + str(total_deleted_emails + idx + 1) + '/' + str(total_emails))
             set_deleted(email_connection, uid)
         else:
-            print('Email ' + str(idx + 1) + '/' + str(total_emails) + ' was not valid')
+            print('Email ' + str(total_deleted_emails + idx + 1) + '/' + str(total_emails) + ' was not valid')
 
     # Confirm the deletion of the messages
     email_connection.expunge()
@@ -85,6 +86,7 @@ while int(emails_count) > 0:
     # chunking of the search results by iCloud
     emails = search_emails(email_connection, normalized_email)
     emails_count = str(len(emails))
+    total_deleted_emails += total_emails
     total_emails += int(emails_count)
 
 print('The cleanup was successful. Deleted ' + str(total_emails) + ' email(s) for ' + normalized_email)
