@@ -5,8 +5,12 @@ A simple tool to batch delete all incoming emails from a sender. Especially usef
 ### Requirements
 
 - python 2.7
-- email_validator package (you can install it with `pip install email_validator`)
+- pip
 - an iCloud account with two-factor authentication enabled
+
+### Installation
+
+Run `sh install.sh` in the program directory and you're done
 
 ### Usage
 
