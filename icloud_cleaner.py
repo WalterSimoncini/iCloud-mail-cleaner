@@ -58,23 +58,36 @@ email_connection = connect(config)
 
 emails = search_emails(email_connection, normalized_email)
 emails_count = str(len(emails))
-print('Found ' + emails_count + ' email(s) for ' + normalized_email)
+total_emails = emails_count
 
-for idx, e in enumerate(emails):
-    # The fetching of the email UID is required
-    # since the email ID may change between operations
-    # as specified by the IMAP standard
-    uid = fetch_uid(email_connection, e)
-    if (uid != None):
-        print('Deleted email ' + str(idx + 1) + '/' + emails_count)
-        set_deleted(email_connection, uid)
-    else:
-        print('Email ' + str(idx + 1) + '/' + emails_count + ' was not valid')
+while int(emails_count) > 0:
+    print('Found ' + emails_count + ' email(s) for ' + normalized_email)
 
-# Confirm the deletion of the messages
-email_connection.expunge()
+    for idx, e in enumerate(emails):
+        # The fetching of the email UID is required
+        # since the email ID may change between operations
+        # as specified by the IMAP standard
+        uid = fetch_uid(email_connection, e)
+        if (uid != None):
+            print('Deleted email ' + str(idx + 1) + '/' + total_emails)
+            set_deleted(email_connection, uid)
+        else:
+            print('Email ' + str(idx + 1) + '/' + total_emails + ' was not valid')
 
-print('Deleted ' + emails_count + ' email(s) for ' + normalized_email)
+    # Confirm the deletion of the messages
+    email_connection.expunge()
+
+    print('Deleted ' + emails_count + ' email(s) for ' + normalized_email)
+    print('Checking for remaining emails...')
+
+    # Verify if there are any emails left on the server for 
+    # the target address. This is required to circumvent the
+    # chunking of the search results by iCloud
+    emails = search_emails(email_connection, normalized_email)
+    emails_count = str(len(emails))
+    total_emails += emails_count
+
+print('The cleanup was successful. Deleted ' + total_emails + ' email(s) for ' + normalized_email)
 
 # Close the mailbox and logout
 email_connection.close()
