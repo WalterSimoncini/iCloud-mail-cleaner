@@ -87,7 +87,7 @@ while int(emails_count) > 0:
     emails_count = str(len(emails))
     total_emails += int(emails_count)
 
-print('The cleanup was successful. Deleted ' + total_emails + ' email(s) for ' + normalized_email)
+print('The cleanup was successful. Deleted ' + str(total_emails) + ' email(s) for ' + normalized_email)
 
 # Close the mailbox and logout
 email_connection.close()
