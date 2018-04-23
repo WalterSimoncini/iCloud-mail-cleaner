@@ -71,6 +71,7 @@ config = ConfigObj('config.ini')
 print('Connecting to ' + config['username'] + '@icloud.com...')
 email_connection = connect(config)
 
+total_emails_count = 0
 for target_idx, target_email in enumerate(target_emails):
     if not validate_input_email(target_email):
         print('The email \'' + target_email + '\' is not valid')
@@ -110,6 +111,9 @@ for target_idx, target_email in enumerate(target_emails):
         total_emails_for_target += int(emails_count)
 
     print('The cleanup for ' + target_email + ' was successful. Deleted ' + str(total_emails_for_target) + ' email(s)')
+    total_emails_count += total_emails_for_target
+
+print('The cleanup was successful. Deleted ' + str(total_emails_count) + ' email(s)')
 
 # Close the mailbox and logout
 email_connection.close()
