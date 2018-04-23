@@ -1,6 +1,7 @@
 # iCloud email cleaning tool
 
 A simple tool to batch delete all incoming emails from a sender. Especially useful if you subscribe to a bunch of newsletters and don't bother to delete the emails day by day
+
 **WARNING:** the emails deleted with this tool will be gone forever. Use this tool carefully!
 
 ### Requirements
