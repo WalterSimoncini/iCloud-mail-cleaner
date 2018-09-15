@@ -29,7 +29,7 @@ def set_deleted(email_connection, email_uid):
 
 def fetch_uid(email_connection, email_id):
     status, uid_string = email_connection.fetch(email_id, 'UID')
-    uid_res = re.search(r'\((.*?)\)', uid_string[0])
+    uid_res = re.search(r'\((UID.*?)\)', uid_string[0])
 
     if (uid_res != None):
         return uid_res.group(1).replace('UID', '')
