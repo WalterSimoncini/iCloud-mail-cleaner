@@ -18,21 +18,22 @@ def connect(config):
 
 def search_emails(email_connection, sender):
     typ, data = email_connection.search(None, '(FROM "' + sender + '")')
-    
+
     # Split the email identifiers in an array
     mail_ids = data[0]
+    if (mail_ids is None):
+        return []
     return mail_ids.split()
 
 # Add the deleted flag to an email
 def set_deleted(email_connection, email_uid):
-    email_connection.uid("STORE", int(email_uid), "+FLAGS", "(\\Deleted)")
+    email_connection.uid("STORE", email_uid, "+FLAGS", "(\\Deleted)")
 
 def fetch_uid(email_connection, email_id):
     status, uid_string = email_connection.fetch(email_id, 'UID')
-    uid_res = re.search(r'\((UID.*?)\)', uid_string[0])
-
+    uid_res = re.search(r'\((UID.*?)\)', uid_string[0].decode("utf-8"))
     if (uid_res != None):
-        return uid_res.group(1).replace('UID', '')
+        return uid_res.group(1).replace('UID', '').strip()
     else:
         return None
 
@@ -53,7 +54,8 @@ def verify_cli_args(args):
 
 def import_emails_from_file(filename):
     if os.path.isfile(filename):
-        return open(filename).read().split('\n')
+        with open(filename, 'r') as file:
+            return [line for line in file.read().split('\n') if line.strip()]
     else:
         print('The file ' + filename + ' doesn\'t exist')
 
@@ -102,7 +104,7 @@ for target_idx, target_email in enumerate(target_emails):
         print('Deleted ' + emails_count + ' email(s) for ' + target_email)
         print('Checking for remaining emails...')
 
-        # Verify if there are any emails left on the server for 
+        # Verify if there are any emails left on the server for
         # the target address. This is required to circumvent the
         # chunking of the search results by iCloud
         emails = search_emails(email_connection, target_email)
